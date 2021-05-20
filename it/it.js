@@ -10,7 +10,7 @@ async function main() {
   let agent = {};
   var proxy = process.env.https_proxy || process.env.HTTPS_PROXY;
   if (proxy) {
-    agent = HttpsProxyAgent(proxy);
+    agent = new HttpsProxyAgent(proxy);
   }
 
   const token = process.env.GITHUB_TOKEN;

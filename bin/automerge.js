@@ -5,6 +5,7 @@ const process = require("process");
 const fse = require("fs-extra");
 const { ArgumentParser } = require("argparse");
 const { Octokit } = require("@octokit/rest");
+const { HttpsProxyAgent } = require("https-proxy-agent");
 
 const { ClientError, logger, createConfig } = require("../lib/common");
 const { executeLocally, executeGitHubAction } = require("../lib/api");
@@ -58,9 +59,16 @@ async function main() {
 
   const token = env("GITHUB_TOKEN");
 
+  let agent = {};
+  var proxy = process.env.https_proxy || process.env.HTTPS_PROXY;
+  if (proxy) {
+    agent = new HttpsProxyAgent(proxy);
+  }
+
   const octokit = new Octokit({
     auth: `token ${token}`,
-    userAgent: "pascalgn/automerge-action"
+    userAgent: "pascalgn/automerge-action",
+    request: { agent: agent },
   });
 
   const config = createConfig(process.env);
